@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>For My Love</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+      background: linear-gradient(to bottom right, #ffe6f0, #fff);
+    }
+
+    /* Intro */
+    #intro {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom right, #ff99cc, #fff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    #intro h1 {
+      color: white;
+      font-size: 28px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Container */
+    .container {
+      display: none;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .letter {
+      background: white;
+      padding: 40px;
+      max-width: 600px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      line-height: 1.8;
+      font-size: 18px;
+      color: #333;
+      margin: 20px;
+      z-index: 2;
+    }
+
+    h1 {
+      text-align: center;
+      color: #ff4d88;
+    }
+
+    .signature {
+      margin-top: 30px;
+      text-align: right;
+      font-style: italic;
+    }
+
+    /* Typing cursor */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      background: #333;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+
+    /* Floating Flowers */
+    .flower {
+      position: absolute;
+      bottom: -20px;
+      font-size: 24px;
+      animation: floatFlower 8s linear infinite;
+      opacity: 0.9;
+    }
+
+    @keyframes floatFlower {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-110vh) scale(1.4);
+        opacity: 0;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- Intro -->
+<div id="intro" onclick="openLetter()">
+  <h1>Tap to open my letter 💌</h1>
+</div>
+
+<!-- Music -->
+<audio id="bgMusic" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Letter -->
+<div class="container" id="mainContent">
+  <div class="letter">
+    <h1 id="title"></h1>
+    <p id="p1"></p>
+    <p id="p2"></p>
+    <p id="p3"></p>
+    <p id="p4"></p>
+    <p id="p5"></p>
+    <p id="p6"></p>
+    <div class="signature" id="signature"></div>
+  </div>
+</div>
+
+<script>
+  const content = [
+    { id: "title", text: "My Mark Baby ko" },
+    { id: "p1", text: "I hope you'll appreciate this HEHEHE" },
+    { id: "p2", text: "I just wanna say that I would rather endure the pain of loving you, as long as you're there, than feel nothing at all without you. For you, I would do everything." },
+    { id: "p3", text: "I know there's a difference between being alone and having you in my life. And if I ever lost you, I feel like I would lose a part of myself too, the dreams we shared, the future we built and imagined together. I don’t even know how I would go back to the version of me who didn’t know you existed." },
+    { id: "p4", text: "I love you. And this time, just like you, I will prioritize the things that truly matter, not just for me, but for us. I want to prove, even to your parents, that I can give you the life you deserve when the time comes for us to be together under the same roof. And about what you always say, that I deserve someone better, why can’t you just become better for me instead not now, but eventually diba?" },
+    { id: "p5", text: "I will never regret knowing you. I will never regret loving you. I assure you that you have my whole love, my loyalty, and everything. There is no one else for me, it’s only you, my baby boy." },
+    { id: "p6", text: "I love you always and in all ways. I love you entirely and completely. Things may be hard sometimes, but together we will figure things out." },
+    { id: "signature", text: "Forever yours." }
+  ];
+
+  function typeText(element, text, speed = 30) {
+    return new Promise(resolve => {
+      let i = 0;
+      const cursor = document.createElement("span");
+      cursor.className = "cursor";
+      element.appendChild(cursor);
+
+      function typing() {
+        if (i < text.length) {
+          element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
+          i++;
+          setTimeout(typing, speed);
+        } else {
+          cursor.remove();
+          resolve();
+        }
+      }
+      typing();
+    });
+  }
+
+  async function startTyping() {
+    for (let item of content) {
+      let el = document.getElementById(item.id);
+      await typeText(el, item.text);
+      await new Promise(r => setTimeout(r, 400));
+    }
+  }
+
+  function openLetter() {
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("mainContent").style.display = "flex";
+
+    document.getElementById("bgMusic").play();
+    startTyping();
+
+    const flowers = ["🌸","🌷","🌹","💐","🌺"];
+
+    setInterval(() => {
+      let flower = document.createElement("div");
+      flower.className = "flower";
+      flower.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
+      flower.style.left = Math.random() * 100 + "vw";
+      flower.style.fontSize = (Math.random() * 20 + 18) + "px";
+      document.body.appendChild(flower);
+
+      setTimeout(() => flower.remove(), 8000);
+    }, 250);
+  }
+</script>
+
+</body>
+</html>
